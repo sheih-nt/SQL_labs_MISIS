@@ -1,3 +1,3 @@
 SELECT TOP 10 PERCENT Name, Weight
-FROM Product
+FROM SalesLT.Product
 ORDER BY Weight DESC;
