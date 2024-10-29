@@ -1,3 +1,3 @@
 SELECT ProductNumber, Name, ListPrice
-FROM Product
+FROM SalesLT.Product
 WHERE ProductNumber LIKE 'BK-%';
