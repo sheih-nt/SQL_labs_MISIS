@@ -1,2 +1,2 @@
 SELECT DISTINCT City, StateProvince
-FROM Address;
+FROM SalesLT.Address;
