@@ -1,0 +1,3 @@
+SELECT TOP 10 PERCENT Name, Weight
+FROM Product
+ORDER BY Weight DESC;
