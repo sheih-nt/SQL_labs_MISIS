@@ -1,3 +1,3 @@
 SELECT Name, Color, Size
-FROM Product
+FROM SalesLT.Product
 WHERE ProductModelID = 1;
