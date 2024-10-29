@@ -66,7 +66,6 @@ WHERE CA.CustomerID IS NULL;
 Создайте запрос, который возвращает список клиентов, не сделавших заказов, и товаров, которые никогда не заказывались.
 
 ```sql
--- Клиенты без заказов
 SELECT C.CustomerID, NULL AS ProductID
 FROM SalesLT.Customer C
 LEFT JOIN SalesLT.SalesOrderHeader SOH
@@ -75,7 +74,6 @@ WHERE SOH.CustomerID IS NULL
 
 UNION
 
--- Товары, которые никогда не были заказаны
 SELECT NULL AS CustomerID, P.ProductID
 FROM SalesLT.Product P
 LEFT JOIN SalesLT.SalesOrderDetail SOD
