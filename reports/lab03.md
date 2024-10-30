@@ -66,14 +66,13 @@ WHERE CA.CustomerID IS NULL;
 Создайте запрос, который возвращает список клиентов, не сделавших заказов, и товаров, которые никогда не заказывались.
 
 ```sql
-SELECT C.CustomerID, NULL AS ProductID
 SELECT C.CustomerID, P.ProductID
 FROM SalesLT.Customer C
-FULL JOIN SalesLT.SalesOrderHeader SOH
+LEFT JOIN SalesLT.SalesOrderHeader SOH
     ON C.CustomerID = SOH.CustomerID
 FULL JOIN SalesLT.Product P
-    ON 1 = 1 
-FULL JOIN SalesLT.SalesOrderDetail SOD
+    ON P.ProductID = SOH.ProductID
+LEFT JOIN SalesLT.SalesOrderDetail SOD
     ON P.ProductID = SOD.ProductID
 WHERE SOH.CustomerID IS NULL OR SOD.ProductID IS NULL;
 
