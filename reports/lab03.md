@@ -72,7 +72,7 @@ FROM SalesLT.Customer C
 FULL JOIN SalesLT.SalesOrderHeader SOH
     ON C.CustomerID = SOH.CustomerID
 FULL JOIN SalesLT.Product P
-    ON 1 = 1  -- фиктивное условие для объединения с таблицей продуктов
+    ON 1 = 1 
 FULL JOIN SalesLT.SalesOrderDetail SOD
     ON P.ProductID = SOD.ProductID
 WHERE SOH.CustomerID IS NULL OR SOD.ProductID IS NULL;
