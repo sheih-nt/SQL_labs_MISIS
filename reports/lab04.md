@@ -91,7 +91,7 @@ JOIN SalesLT.CustomerAddress CA
     ON C.CustomerID = CA.CustomerID
 WHERE CA.AddressType = 'Main Office'
 
-INTERSECT
+INTERSECT 
 
 SELECT C.CompanyName
 FROM SalesLT.Customer C
