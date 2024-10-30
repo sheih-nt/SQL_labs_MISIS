@@ -64,18 +64,17 @@ WHERE CA.CustomerID IS NULL;
 
 ### 3. Получить список клиентов и товаров без заказов
 Создайте запрос, который возвращает список клиентов, не сделавших заказов, и товаров, которые никогда не заказывались.
-
+##Изменить
 ```sql
 SELECT C.CustomerID, P.ProductID
 FROM SalesLT.Customer C
 LEFT JOIN SalesLT.SalesOrderHeader SOH
     ON C.CustomerID = SOH.CustomerID
-FULL JOIN SalesLT.Product P
-    ON P.ProductID = SOH.ProductID
 LEFT JOIN SalesLT.SalesOrderDetail SOD
     ON P.ProductID = SOD.ProductID
+FULL JOIN SalesLT.Product P
+    ON P.ProductID = SOH.ProductID
 WHERE SOH.CustomerID IS NULL OR SOD.ProductID IS NULL;
-
 ```
 
 ![Task 3.2.3](image/task3_2_3.png)
