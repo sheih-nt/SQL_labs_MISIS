@@ -67,18 +67,16 @@ WHERE CA.CustomerID IS NULL;
 
 ```sql
 SELECT C.CustomerID, NULL AS ProductID
+SELECT C.CustomerID, P.ProductID
 FROM SalesLT.Customer C
-LEFT JOIN SalesLT.SalesOrderHeader SOH
+FULL JOIN SalesLT.SalesOrderHeader SOH
     ON C.CustomerID = SOH.CustomerID
-WHERE SOH.CustomerID IS NULL
-
-UNION
-
-SELECT NULL AS CustomerID, P.ProductID
-FROM SalesLT.Product P
-LEFT JOIN SalesLT.SalesOrderDetail SOD
+FULL JOIN SalesLT.Product P
+    ON 1 = 1  -- фиктивное условие для объединения с таблицей продуктов
+FULL JOIN SalesLT.SalesOrderDetail SOD
     ON P.ProductID = SOD.ProductID
-WHERE SOD.ProductID IS NULL;
+WHERE SOH.CustomerID IS NULL OR SOD.ProductID IS NULL;
+
 ```
 
 ![Task 3.2.3](image/task3_2_3.png)
