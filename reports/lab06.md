@@ -1,180 +1,154 @@
-# Лабораторная работа 5 - Использование функций и агрегирование данных
 
-
-## Задача 1: Получение информации о товарах
-
-### 1. Получите наименование и приблизительный вес каждого товара
-
-Запрос, который возвращает идентификатор товара, наименование товара в верхнем регистре и вес, округленный до ближайшего целого:
-
-```sql
-SELECT 
-    ProductID, 
-    UPPER(Name) AS ProductName, 
-    ROUND(Weight, 0) AS ApproxWeight
-FROM 
-    SalesLT.Product;
-```
-
-![Task 5.1.1](image/task5_1_1.png)
+# Лабораторная работа 6 - Использование подзапросов и APPLY
 
 ---
 
-### 2. Получите год и месяц, когда товары были впервые проданы
+## Задача 1: Получение информации о ценах на товары
 
-Запрос с добавлением года и названия месяца начала продаж:
+### 1. Получите товары, у которых прейскурантная цена выше средней цены за товар
 
-```sql
-SELECT 
-    ProductID, 
-    UPPER(Name) AS ProductName, 
-    ROUND(Weight, 0) AS ApproxWeight,
-    YEAR(SellStartDate) AS SellStartYear,
-    DATENAME(MONTH, SellStartDate) AS SellStartMonth
-FROM 
-    SalesLT.Product;
-```
-
-![Task 5.1.2](image/task5_1_2.png)
-
----
-
-### 3. Получите типы товаров из номеров товаров
-
-Запрос с добавлением первых двух символов из номера товара:
+Запрос, который возвращает товары, чья прейскурантная цена выше средней цены за единицу товара для всех проданных товаров:
 
 ```sql
 SELECT 
     ProductID, 
-    UPPER(Name) AS ProductName, 
-    ROUND(Weight, 0) AS ApproxWeight,
-    YEAR(SellStartDate) AS SellStartYear,
-    DATENAME(MONTH, SellStartDate) AS SellStartMonth,
-    LEFT(ProductNumber, 2) AS ProductType
-FROM 
-    SalesLT.Product;
-```
-
-![Task 5.1.3](image/task5_1_3.png)
-
----
-
-### 4. Получите только товары, имеющие числовой размер
-
-Запрос с фильтрацией товаров, имеющих числовой размер:
-
-```sql
-SELECT 
-    ProductID, 
-    UPPER(Name) AS ProductName, 
-    ROUND(Weight, 0) AS ApproxWeight,
-    YEAR(SellStartDate) AS SellStartYear,
-    DATENAME(MONTH, SellStartDate) AS SellStartMonth,
-    LEFT(ProductNumber, 2) AS ProductType
+    Name, 
+    ListPrice
 FROM 
     SalesLT.Product
 WHERE 
-    ISNUMERIC(Size) = 1;
+    ListPrice > (SELECT AVG(UnitPrice) FROM SalesLT.SalesOrderDetail)
+ORDER BY 
+    ProductID;
 ```
 
-![Task 5.1.4](image/task5_1_4.png)
+![Task 6.1.1](image/task6_1_1.png)
 
 ---
 
-## Задача 2: Ранжирование клиентов по доходу
+### 2. Получите товары с прейскурантной ценой в $100 или более, которые были проданы менее чем за $100
 
-### 1. Получите компании, отранжированные по суммам продаж
-
-Запрос для получения списка компаний с доходами и их ранжированием:
+Запрос для получения товаров, чья прейскурантная цена составляет $100 или более, но они были проданы за менее чем $100:
 
 ```sql
 SELECT 
-    C.CompanyName, 
-    SOH.TotalDue AS Revenue,
-    RANK() OVER (ORDER BY SOH.TotalDue DESC) AS RankByRevenue
+    ProductID, 
+    Name, 
+    ListPrice
+FROM 
+    SalesLT.Product
+WHERE 
+    ListPrice >= 100 
+    AND ProductID IN (
+        SELECT ProductID 
+        FROM SalesLT.SalesOrderDetail 
+        WHERE UnitPrice < 100
+    )
+ORDER BY 
+    ProductID;
+```
+
+![Task 6.1.2](image/task6_1_2.png)
+
+---
+
+### 3. Получите себестоимость, прейскурантную цену и среднюю цену продажи для каждого товара
+
+Запрос для извлечения идентификатора товара, наименования, себестоимости, прейскурантной цены и средней цены продажи:
+
+```sql
+SELECT 
+    P.ProductID, 
+    P.Name, 
+    P.StandardCost, 
+    P.ListPrice, 
+    (SELECT AVG(UnitPrice) 
+     FROM SalesLT.SalesOrderDetail 
+     WHERE ProductID = P.ProductID) AS AvgSellingPrice
+FROM 
+    SalesLT.Product P
+ORDER BY 
+    P.ProductID;
+```
+
+![Task 6.1.3](image/task6_1_3.png)
+
+---
+
+### 4. Получите товары, у которых средняя цена продажи ниже себестоимости
+
+Запрос для фильтрации товаров, где себестоимость выше средней цены продажи:
+
+```sql
+SELECT 
+    P.ProductID, 
+    P.Name, 
+    P.StandardCost, 
+    P.ListPrice, 
+    (SELECT AVG(UnitPrice) 
+     FROM SalesLT.SalesOrderDetail 
+     WHERE ProductID = P.ProductID) AS AvgSellingPrice
+FROM 
+    SalesLT.Product P
+WHERE 
+    P.StandardCost > (SELECT AVG(UnitPrice) 
+                      FROM SalesLT.SalesOrderDetail 
+                      WHERE ProductID = P.ProductID)
+ORDER BY 
+    P.ProductID;
+```
+
+![Task 6.1.4](image/task6_1_4.png)
+
+---
+
+## Задача 2: Получение информации о клиенте
+
+### 1. Получите информацию о клиентах для всех заказов
+
+Запрос для извлечения информации о клиентах из таблицы `SalesLT.SalesOrderHeader` и функции `dbo.ufnGetCustomerInformation`:
+
+```sql
+SELECT 
+    SOH.SalesOrderID, 
+    SOH.CustomerID, 
+    CI.FirstName, 
+    CI.LastName, 
+    SOH.TotalDue
+FROM 
+    SalesLT.SalesOrderHeader SOH
+CROSS APPLY 
+    dbo.ufnGetCustomerInformation(SOH.CustomerID) AS CI
+ORDER BY 
+    SOH.SalesOrderID;
+```
+
+![Task 6.2.1](image/task6_2_1.png)
+
+---
+
+### 2. Получите информацию об адресе клиента
+
+Запрос для извлечения информации об адресе клиента из таблиц `SalesLT.Address`, `SalesLT.CustomerAddress` и функции `dbo.ufnGetCustomerInformation`:
+
+```sql
+SELECT 
+    C.CustomerID, 
+    CI.FirstName, 
+    CI.LastName, 
+    A.AddressLine1, 
+    A.City
 FROM 
     SalesLT.Customer C
+CROSS APPLY 
+    dbo.ufnGetCustomerInformation(C.CustomerID) AS CI
 JOIN 
-    SalesLT.SalesOrderHeader SOH
-    ON C.CustomerID = SOH.CustomerID;
-```
-
-![Task 5.2.1](image/task5_2_1.png)
-
----
-
-## Задача 3: Агрегирование данных по продажам товаров
-
-### 1. Получите общий объем продаж по товару
-
-Запрос для получения списка товаров и их общей суммы продаж:
-
-```sql
-SELECT 
-    P.Name, 
-    SUM(SOD.LineTotal) AS TotalRevenue
-FROM 
-    SalesLT.Product P
+    SalesLT.CustomerAddress CA ON C.CustomerID = CA.CustomerID
 JOIN 
-    SalesLT.SalesOrderDetail SOD
-    ON P.ProductID = SOD.ProductID
-GROUP BY 
-    P.Name
+    SalesLT.Address A ON CA.AddressID = A.AddressID
 ORDER BY 
-    TotalRevenue DESC;
+    C.CustomerID;
 ```
 
-![Task 5.3.1](image/task5_3_1.png)
+![Task 6.2.2](image/task6_2_2.png)
 
----
-
-### 2. Отфильтруйте список продаж товаров, включив в него только те товары, стоимость которых превышает $1000
-
-Измененный запрос с фильтрацией товаров по цене:
-
-```sql
-SELECT 
-    P.Name, 
-    SUM(SOD.LineTotal) AS TotalRevenue
-FROM 
-    SalesLT.Product P
-JOIN 
-    SalesLT.SalesOrderDetail SOD
-    ON P.ProductID = SOD.ProductID
-WHERE 
-    SOD.LineTotal > 1000
-GROUP BY 
-    P.Name
-ORDER BY 
-    TotalRevenue DESC;
-```
-
-![Task 5.3.2](image/task5_3_2.png)
-
----
-
-### 3. Отфильтруйте группы продаж товаров так, чтобы включить только те из них, общий объем продаж которых более $20000
-
-Измененный запрос с фильтрацией по агрегированной сумме:
-
-```sql
-SELECT 
-    P.Name, 
-    SUM(SOD.LineTotal) AS TotalRevenue
-FROM 
-    SalesLT.Product P
-JOIN 
-    SalesLT.SalesOrderDetail SOD
-    ON P.ProductID = SOD.ProductID
-GROUP BY 
-    P.Name
-HAVING 
-    SUM(SOD.LineTotal) > 20000
-ORDER BY 
-    TotalRevenue DESC;
-```
-
-![Task 5.3.3](image/task5_3_3.png)
-
-
-Если нужно оформить отчет для другой лабораторной, уточните.
