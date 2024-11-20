@@ -19,7 +19,7 @@ FROM
     SalesLT.Product;
 ```
 
-![Task 5.1.1](../image/task5_1_1.png)
+![Task 5.1.1](image/task5_1_1.png)
 
 ---
 
@@ -38,7 +38,7 @@ FROM
     SalesLT.Product;
 ```
 
-![Task 5.1.2](../image/task5_1_2.png)
+![Task 5.1.2](image/task5_1_2.png)
 
 ---
 
@@ -58,7 +58,7 @@ FROM
     SalesLT.Product;
 ```
 
-![Task 5.1.3](../image/task5_1_3.png)
+![Task 5.1.3](image/task5_1_3.png)
 
 ---
 
@@ -80,7 +80,7 @@ WHERE
     ISNUMERIC(Size) = 1;
 ```
 
-![Task 5.1.4](../image/task5_1_4.png)
+![Task 5.1.4](image/task5_1_4.png)
 
 ---
 
@@ -102,7 +102,7 @@ JOIN
     ON C.CustomerID = SOH.CustomerID;
 ```
 
-![Task 5.2.1](../image/task5_2_1.png)
+![Task 5.2.1](image/task5_2_1.png)
 
 ---
 
@@ -127,7 +127,7 @@ ORDER BY
     TotalRevenue DESC;
 ```
 
-![Task 5.3.1](../image/task5_3_1.png)
+![Task 5.3.1](image/task5_3_1.png)
 
 ---
 
@@ -152,7 +152,7 @@ ORDER BY
     TotalRevenue DESC;
 ```
 
-![Task 5.3.2](../image/task5_3_2.png)
+![Task 5.3.2](image/task5_3_2.png)
 
 ---
 
@@ -177,4 +177,4 @@ ORDER BY
     TotalRevenue DESC;
 ```
 
-![Task 5.3.3](../image/task5_3_3.png)
+![Task 5.3.3](image/task5_3_3.png)
