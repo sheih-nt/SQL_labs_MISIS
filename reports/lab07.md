@@ -12,7 +12,7 @@
 SELECT 
     P.ProductID, 
     P.Name AS ProductName, 
-    VPM.ProductModel, 
+    VPM.ProductModelID, 
     VPM.Summary
 FROM 
     SalesLT.Product P
