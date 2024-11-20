@@ -169,3 +169,7 @@ ORDER BY
 
 ![Task 7.2.2](image/task7_2_2.png)
 
+
+
+
+COLLATE — для норм запроса 
